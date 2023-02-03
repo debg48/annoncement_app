@@ -91,12 +91,12 @@ class Create(APIView):
             try: 
                 data=request.data
                 new_ann = Annoncement()
-                new_ann.announce=data['announce']
-                if not (data['status']=='entered' or data['status']=='submitted'):
+                if str(data['announce']) == '' :
                     return JsonResponse({
-                    "message": "Please Entered a valid status it can either be entred or submitted !",
-                    "success" : False
-                })
+                        "message": "Please Entered a valid announcement it cannot be blank",
+                        "success" : False
+                    })
+                new_ann.announce=data['announce']
                 if datetime.datetime.strptime(data['start_time'], '%Y-%m-%d %H:%M:%S.%f')<datetime.datetime.now() or datetime.datetime.strptime(data['start_time'], '%Y-%m-%d %H:%M:%S.%f')>=datetime.datetime.strptime(data['end_time'], '%Y-%m-%d %H:%M:%S.%f') or datetime.datetime.strptime(data['end_time'], '%Y-%m-%d %H:%M:%S.%f')<datetime.datetime.now() :
                         
                         return JsonResponse({
@@ -145,4 +145,89 @@ class ReadAll(APIView):
 # update status
 
 class ChangeStatus(APIView):
-    pass
+    def post(self,request):
+        token=request.COOKIES.get('jwt')
+
+        if not token:
+            return JsonResponse({
+                "message": "Authentication Failed!",
+                "success" : False
+            })
+        try:
+            data=request.data
+            try:
+                announce = Annoncement.objects.get(id=data['id'])
+                if (announce.status == 'entered' and data['status']!='submitted'):
+                    return JsonResponse({
+                        "message" : "Only submitted status allowed for entered !",
+                        "success" : False
+                    })
+                if (announce.status == 'published' and data['status']!='unpublished'):
+                    return JsonResponse({
+                        "message" : "Only unpublished status allowed for published !",
+                        "success" : False
+                    })
+                if (announce.status == 'unpublished' and data['status']!='published'):
+                    return JsonResponse({
+                        "message" : "Only published status allowed for unpublished !",
+                        "success" : False
+                    })
+                
+                # the following logic fails
+
+                if ((announce.status == 'submitted' and data['status']!='accepted') or (announce.status == 'submitted' and data['status'] !='rejected') or (announce.status == 'submitted' and data['status'] !="published")):
+                    return JsonResponse({
+                        "message" : "Only published , accepted or rejected status allowed for submitted , please choose correct status !",
+                        "success" : False
+                    })
+                announce.status=data['status']
+                announce.save()
+                return JsonResponse({"message": "status updated!",
+                    "announcement" : announce.values()
+                    })
+
+            except Exception as e :
+                return JsonResponse({
+                    'message':str(e),
+                    'success':False})
+        except Exception as e :
+            return JsonResponse({
+                    'message': str(e),
+                    'success':False
+                })
+
+# update announcement
+
+class ChangeAnnonce(APIView):
+    def post(self,request):
+        token=request.COOKIES.get('jwt')
+
+        if not token:
+            return JsonResponse({
+                "message": "Authentication Failed!",
+                "success" : False
+            })
+        try:
+            data=request.data
+            try:
+                announce = Annoncement.objects.get(id=data['id'])
+                if str(data['announce']) == '' :
+                    return JsonResponse({
+                        "message": "Please Entered a valid announcement it cannot be blank",
+                        "success" : False
+                    })
+                announce.announce=data['announce']
+                announce.save()
+                return JsonResponse({"message": "announcement updated!",
+                    "announcement" : announce.values()
+                    })
+
+            except Exception as e :
+                return JsonResponse({
+                    'message':str(e),
+                    'success':False})
+        except Exception as e :
+            return JsonResponse({
+                    'message': str(e),
+                    'success':False
+                })

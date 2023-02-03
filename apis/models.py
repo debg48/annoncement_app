@@ -13,7 +13,7 @@ class Annoncement(models.Model):
     announce=models.TextField(null=False,blank=False)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    status = models.CharField(max_length=10,null=False,blank=False,default="Entered")
+    status = models.CharField(max_length=10,null=False,blank=False,default="entered")
     creator = models.CharField(max_length=50,)
     # priority = moels.CharField(max_length=10,null=False,blank=False,default="low")
 
