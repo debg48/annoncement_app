@@ -175,7 +175,7 @@ class ChangeStatus(APIView):
                 
                 # the following logic fails
 
-                if ((announce.status == 'submitted' and data['status']!='accepted') or (announce.status == 'submitted' and data['status'] !='rejected') or (announce.status == 'submitted' and data['status'] !="published")):
+                if ((announce.status == 'submitted' and data['status']!='accepted') and (announce.status == 'submitted' and data['status'] !='rejected') and (announce.status == 'submitted' and data['status'] !="published")):
                     return JsonResponse({
                         "message" : "Only published , accepted or rejected status allowed for submitted , please choose correct status !",
                         "success" : False
