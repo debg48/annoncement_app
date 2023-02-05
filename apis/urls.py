@@ -6,7 +6,8 @@ urlpatterns = [
     path('login/',views.Login.as_view()), #api to login
     path('logout/',views.LogOut.as_view()), # api to logout
     path('create/',views.Create.as_view()), # api to create annoncement
-    path('read/',views.ReadAll.as_view()), #api to read the annoncements
+    path('read-all/',views.ReadAll.as_view()), #api to read the annoncements
+    path('read/<int:pk>',views.ReadAll.as_view()), #api to read pages of announcement
     path('update-status/',views.ChangeStatus.as_view()) #apii to update status
 
 ]

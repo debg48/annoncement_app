@@ -91,7 +91,7 @@ class Create(APIView):
             try: 
                 data=request.data
                 new_ann = Annoncement()
-                if str(data['announce']) == '' :
+                if str(data['announce']).strip() == '' :
                     return JsonResponse({
                         "message": "Please Entered a valid announcement it cannot be blank",
                         "success" : False
@@ -142,10 +142,38 @@ class ReadAll(APIView):
                 "success" : False
             })
 
+# read pages
+
+class Read(APIView):
+    def get(self,request, pk):
+        token=request.COOKIES.get('jwt')
+
+        if not token:
+            return JsonResponse({
+                "message": "Authentication Failed!",
+                "success" : False
+            })
+        try:
+            list= []
+            for i in range((10*pk)+1):
+                aanounce = Annoncement.objects.get(id=i)
+                list.append(announce.values())
+
+            return JsonResponse({
+                "success" : True,
+                "Data" : list
+            })
+        except Exception as e : 
+            return JsonResponse({
+                "success" : False,
+                "message" : str(e)
+            })
+
 # update status
 
 class ChangeStatus(APIView):
     def post(self,request):
+
         token=request.COOKIES.get('jwt')
 
         if not token:
@@ -199,7 +227,9 @@ class ChangeStatus(APIView):
 # update announcement
 
 class ChangeAnnonce(APIView):
+
     def post(self,request):
+
         token=request.COOKIES.get('jwt')
 
         if not token:
@@ -211,7 +241,7 @@ class ChangeAnnonce(APIView):
             data=request.data
             try:
                 announce = Annoncement.objects.get(id=data['id'])
-                if str(data['announce']) == '' :
+                if str(data['announce']).strip() == '' :
                     return JsonResponse({
                         "message": "Please Entered a valid announcement it cannot be blank",
                         "success" : False
@@ -226,8 +256,67 @@ class ChangeAnnonce(APIView):
                 return JsonResponse({
                     'message':str(e),
                     'success':False})
+
         except Exception as e :
             return JsonResponse({
                     'message': str(e),
                     'success':False
                 })
+
+# api to delete an announcement
+
+class Delete(APIView):
+    def post(self,request):
+        token=request.COOKIES.get('jwt')
+
+        if not token:
+            return JsonResponse({
+                "message": "Authentication Failed!",
+                "success" : False
+            })
+        try:
+            data=request.data
+            try:
+                announce = Annoncement.objects.get(id=data['id'])
+                announce.delete()
+                return JsonResponse({
+                    'message':'Deletion Successful',
+                    'success': True
+                })
+            except:
+                return JsonResponse({
+                    'message':'No match found !',
+                    'success':False
+                })
+        except:
+            return JsonResponse({
+                    'message': "Please send valid response!",
+                    'success':False
+                })
+
+# api to delete all anouncement
+
+class DeleteAll(APIView):
+
+    def get(self,request):
+
+        token=request.COOKIES.get('jwt')
+
+        if not token:
+            return JsonResponse({
+                "message": "Authentication Failed!",
+                "success" : False
+            })
+        try:
+            announce = Annoncement.objects.all()
+            announce.delete()
+            return JsonResponse({
+                'message':'Deletion Successful',
+                'success': True
+            })
+        except Exception as e:
+            return JsonResponse({
+                'message':str(e),
+                'success':False
+            })
+
