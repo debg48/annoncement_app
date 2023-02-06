@@ -161,6 +161,11 @@ class Read(APIView):
                     list.append(announce.values())
                 except: 
                     pass
+            if list == [] :
+                return JsonResponse({
+                    "success" : False,
+                    "message" : "No mathching request"
+                })
             return JsonResponse({
                 "success" : True,
                 "Data" : list
@@ -170,6 +175,7 @@ class Read(APIView):
                 "success" : False,
                 "message" : str(e)
             })
+
 
 # update status
 
@@ -202,8 +208,6 @@ class ChangeStatus(APIView):
                         "message" : "Only published status allowed for unpublished !",
                         "success" : False
                     })
-                
-                # the following logic fails
 
                 if ((announce.status == 'submitted' and data['status']!='accepted') and (announce.status == 'submitted' and data['status'] !='rejected') and (announce.status == 'submitted' and data['status'] !="published")):
                     return JsonResponse({
