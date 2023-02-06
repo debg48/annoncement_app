@@ -145,7 +145,7 @@ class ReadAll(APIView):
 # read pages
 
 class Read(APIView):
-    def get(self,request, pk):
+    def get(self,request,pk):
         token=request.COOKIES.get('jwt')
 
         if not token:
@@ -155,10 +155,12 @@ class Read(APIView):
             })
         try:
             list= []
-            for i in range((10*pk)+1):
-                aanounce = Annoncement.objects.get(id=i)
-                list.append(announce.values())
-
+            for i in range((10*(pk-1)),(((10*pk)+1))):
+                try:
+                    announce = Annoncement.objects.get(id=i)
+                    list.append(announce.values())
+                except: 
+                    pass
             return JsonResponse({
                 "success" : True,
                 "Data" : list
