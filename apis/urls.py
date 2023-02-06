@@ -8,6 +8,7 @@ urlpatterns = [
     path('create/',views.Create.as_view()), # api to create annoncement
     path('read-all/',views.ReadAll.as_view()), #api to read the annoncements
     path('read/<int:pk>',views.ReadAll.as_view()), #api to read pages of announcement
-    path('update-status/',views.ChangeStatus.as_view()) #apii to update status
-
+    path('update-status/',views.ChangeStatus.as_view()), #apii to update status
+    path('delete/',views.Delete.as_view()), #api to delete an announcement
+    path('delete-all',views.DeleteAll.as_view()) #api to delete all announcement
 ]
